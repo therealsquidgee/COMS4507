@@ -1,0 +1,72 @@
+=============== Apr 21, 2018 (AEST) ===============
+13:14:34.713924 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+13:14:34.718936 db@open opening
+13:14:34.721944 version@stat F·[] S·0B[] Sc·[]
+13:14:34.723954 db@janitor F·2 G·0
+13:14:34.723954 db@open done T·5.0179ms
+13:22:24.481622 db@close closing
+13:22:24.487646 db@close done T·6.0242ms
+=============== Apr 21, 2018 (AEST) ===============
+13:22:42.584521 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+13:22:42.585518 version@stat F·[] S·0B[] Sc·[]
+13:22:42.585518 db@open opening
+13:22:42.585518 journal@recovery F·1
+13:22:42.587522 journal@recovery recovering @1
+13:22:42.603908 memdb@flush created L0@2 N·4340 S·99KiB "n:\x00..ing,v1326":"version,v1"
+13:22:42.606908 version@stat F·[1] S·99KiB[99KiB] Sc·[0.25]
+13:22:42.612925 db@janitor F·3 G·0
+13:22:42.612925 db@open done T·27.4076ms
+13:23:21.741218 db@close closing
+13:23:21.760303 db@close done T·19.0843ms
+=============== Apr 21, 2018 (AEST) ===============
+13:23:56.081572 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+13:23:56.081572 version@stat F·[1] S·99KiB[99KiB] Sc·[0.25]
+13:23:56.081572 db@open opening
+13:23:56.081572 journal@recovery F·1
+13:23:56.083576 journal@recovery recovering @3
+13:23:56.089593 memdb@flush created L0@5 N·1105 S·35KiB "n:\x00..ing,v5308":"n:\xff..ong,v5066"
+13:23:56.092568 version@stat F·[2] S·135KiB[135KiB] Sc·[0.50]
+13:23:56.097617 db@janitor F·4 G·0
+13:23:56.097617 db@open done T·16.0452ms
+13:23:56.115664 table@compaction L0·2 -> L1·0 S·135KiB Q·5447
+13:23:56.122683 table@build created L1@8 N·2266 S·102KiB "n:\x00..ing,v5308":"version,v1"
+13:23:56.122683 version@stat F·[0 1] S·102KiB[0B 102KiB] Sc·[0.00 0.00]
+13:23:56.123685 table@compaction committed F-1 S-32KiB Ke·0 D·3179 T·8.0214ms
+13:23:56.124688 table@remove removed @5
+13:23:56.124688 table@remove removed @2
+13:29:18.146897 db@close closing
+13:29:18.155914 db@close done T·9.017ms
+=============== Apr 21, 2018 (AEST) ===============
+13:29:21.705184 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+13:29:21.705184 version@stat F·[0 1] S·102KiB[0B 102KiB] Sc·[0.00 0.00]
+13:29:21.705184 db@open opening
+13:29:21.706189 journal@recovery F·1
+13:29:21.707191 journal@recovery recovering @6
+13:29:21.975191 memdb@flush created L0@9 N·2213 S·43KiB "n:\x00..ing,v5816":"n:\xff..ing,v5851"
+13:29:21.978226 version@stat F·[1 1] S·145KiB[43KiB 102KiB] Sc·[0.25 0.00]
+13:29:22.004127 db@janitor F·4 G·0
+13:29:22.004127 db@open done T·298.9428ms
+13:29:22.668638 table@compaction L0·1 -> L1·1 S·145KiB Q·7702
+13:29:22.728373 table@build created L1@12 N·2832 S·127KiB "n:\x00..ing,v5816":"version,v1"
+13:29:22.728373 version@stat F·[0 1] S·127KiB[0B 127KiB] Sc·[0.00 0.00]
+13:29:22.735467 table@compaction committed F-1 S-18KiB Ke·0 D·1647 T·66.8291ms
+13:29:22.735467 table@remove removed @9
+13:29:22.736429 table@remove removed @8
+13:32:25.007397 db@close closing
+13:32:25.053518 db@close done T·46.1214ms
+=============== Apr 21, 2018 (AEST) ===============
+13:32:27.902642 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+13:32:27.902642 version@stat F·[0 1] S·127KiB[0B 127KiB] Sc·[0.00 0.00]
+13:32:27.902642 db@open opening
+13:32:27.902642 journal@recovery F·1
+13:32:27.904649 journal@recovery recovering @10
+13:32:27.917656 memdb@flush created L0@13 N·4215 S·143KiB "n:\x00..ing,v8086":"n:\xff..ong,v11777"
+13:32:27.920664 version@stat F·[1 1] S·270KiB[143KiB 127KiB] Sc·[0.25 0.00]
+13:32:27.925678 db@janitor F·4 G·0
+13:32:27.925678 db@open done T·23.0351ms
+13:32:28.205524 table@compaction L0·1 -> L1·1 S·270KiB Q·11907
+13:32:28.214652 table@build created L1@16 N·5082 S·238KiB "n:\x00..ing,v5816":"version,v1"
+13:32:28.214652 version@stat F·[0 1] S·238KiB[0B 238KiB] Sc·[0.00 0.00]
+13:32:28.215657 table@compaction committed F-1 S-32KiB Ke·0 D·1965 T·10.1329ms
+13:32:28.216662 table@remove removed @13
+13:32:28.216662 table@remove removed @12

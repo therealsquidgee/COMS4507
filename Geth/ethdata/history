@@ -1,0 +1,28 @@
+miner.start(1)
+miner.stop()
+miner.stop(1)
+miner.stop()
+eth.getBalance(primary)
+eth.accounts
+primary = eth.accounts[0]
+eth.getBalance(primary)
+miner.mine(1)
+miner.start(1)
+miner.stop()
+eth.getBalance(primary)
+primary = eth.accounts[0]
+eth.getBalance(primary)
+primary = eth.accounts[0]
+eth.getBalance(primary)
+primary
+primary = eth.accounts[0]
+primary = eth.accounts[1]
+miner.start(1)
+miner.stop()
+primary = eth.accounts[1]
+eth.getBalance(primary)
+eth.setBase(primary)
+eth.getEtherbase()
+miner.setEtherbase(primary)
+miner.start(1)
+miner.stop()

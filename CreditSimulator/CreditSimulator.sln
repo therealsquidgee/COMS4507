@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.27130.2027
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CreditSimulator", "CreditSimulator\CreditSimulator.csproj", "{377D8EFD-308F-44B8-AF6A-66E347A2CA17}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RepChain", "..\RepChain\RepChain\RepChain.csproj", "{1ADA8D13-8D2A-4339-824E-D0A862AB0EAD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{377D8EFD-308F-44B8-AF6A-66E347A2CA17}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{377D8EFD-308F-44B8-AF6A-66E347A2CA17}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{377D8EFD-308F-44B8-AF6A-66E347A2CA17}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1ADA8D13-8D2A-4339-824E-D0A862AB0EAD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1ADA8D13-8D2A-4339-824E-D0A862AB0EAD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1ADA8D13-8D2A-4339-824E-D0A862AB0EAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1ADA8D13-8D2A-4339-824E-D0A862AB0EAD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -99,15 +99,15 @@ namespace CreditSimulator
                 return;
             }
 
-            Console.ForegroundColor = ConsoleColor.Red;
+            Console.ForegroundColor = ConsoleColor.Yellow;
             var msg = string.Format("Customer {0} has missed a payment, this is their {1}th missed payment, only {2} more payments can be missed, remaining balance is {3}.",
                 customer.id,
                 customer.paymentsMissed,
                 customer.maxPaymentsMissed - customer.paymentsMissed - 1,
                 customer.remainingAmount);
+            Console.WriteLine(msg);
             Console.ForegroundColor = ConsoleColor.Gray;
 
-            Console.WriteLine(msg);
         }
 
         private static void DefaultLoan(Customer customer)

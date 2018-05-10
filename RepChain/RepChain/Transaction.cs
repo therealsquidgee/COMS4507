@@ -6,18 +6,23 @@ using System.Threading.Tasks;
 
 namespace RepChain
 {
-    public class Block
+    public class Transaction
     {
+        public Wallet miner;
+        public Wallet payer;
+        public Wallet payee;
+
         public String hash;
         public String previousHash;
-        public String data; //our data will be a simple message.
+        public int value; //our data will be a simple message.
         public long timeStamp; // in epoch time (seconds)
         public int nonce;
+        public Random rand = new Random();
 
-        //Block Constructor.
-        public Block(String data, String previousHash)
+        //Transaction Constructor.
+        public Transaction(int value, String previousHash, Wallet miner, Wallet payer, Wallet payee)
         {
-            this.data = data;
+            this.value = value;
             this.previousHash = previousHash;
             this.timeStamp = (long) (DateTime.Now - new DateTime(1970, 1, 1)).TotalSeconds;
             this.nonce = 0;
@@ -30,12 +35,12 @@ namespace RepChain
                     previousHash +
                     timeStamp +
                     nonce +
-                    data
+                    value
                     );
             return calculatedhash;
         }
 
-        public void mineBlock(int difficulty)
+        public void mineTransaction(int difficulty)
         {
             var target = new String(new char[difficulty]).Replace('\0', '0'); //Create a string with difficulty * "0" 
             while (hash.Substring(0, difficulty) != target)
@@ -43,10 +48,9 @@ namespace RepChain
                 /*Console.WriteLine(hash.Substring(0, difficulty));
                 Console.WriteLine(target);
                 Console.WriteLine("");*/
-                nonce++;
+                nonce = rand.Next();
                 hash = calculateHash();
             }
-            Console.WriteLine("Block Mined: " + hash);
         }
     }
 }

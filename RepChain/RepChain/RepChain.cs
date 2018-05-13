@@ -15,7 +15,7 @@ namespace RepChain
 
         public EventWaitHandle waitHandle;
 
-        public static int reward = 100;
+        public static int reward = 10;
 
         public RepChain()
         {
@@ -46,6 +46,9 @@ namespace RepChain
             Transaction previousTransaction;
 
             String hashTarget = new String(new char[difficulty]).Replace('\0', '0');
+
+            var wallets = new List<Wallet>();
+            wallets.Add(blockchain.First().miner);
 
             //loop through blockchain to check hashes:
             for (int i = 1; i < blockchain.Count; i++)

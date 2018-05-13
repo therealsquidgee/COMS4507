@@ -54,5 +54,11 @@
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\RepChain\RepChain\RepChain.csproj">
+      <Project>{1ADA8D13-8D2A-4339-824E-D0A862AB0EAD}</Project>
+      <Name>RepChain</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

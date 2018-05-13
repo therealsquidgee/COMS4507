@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace RepChain
 {
+    [JsonObject(MemberSerialization.OptOut)]
     public class Transaction
     {
         public Wallet miner;
@@ -26,6 +28,11 @@ namespace RepChain
             this.previousHash = previousHash;
             this.timeStamp = (long) (DateTime.Now - new DateTime(1970, 1, 1)).TotalSeconds;
             this.nonce = 0;
+
+            this.miner = miner;
+            this.payer = payer;
+            this.payee = payee;
+
             this.hash = calculateHash();
         }
 
@@ -35,7 +42,9 @@ namespace RepChain
                     previousHash +
                     timeStamp +
                     nonce +
-                    value
+                    value +
+                    payer.id.ToString() +
+                    payee.id.ToString()
                     );
             return calculatedhash;
         }

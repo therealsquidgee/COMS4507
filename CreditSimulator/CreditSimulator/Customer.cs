@@ -1,14 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using RepChain;
+using System;
 
 namespace CreditSimulator
 {
-    class Customer
+    public class Customer
     {
         public static Random rand = new Random();
+
+        public Wallet wallet { get; set; }
 
         public int id { get; set; }
 
@@ -34,6 +33,8 @@ namespace CreditSimulator
 
         public Customer(int id, int loanAmount)
         {
+            this.wallet = new Wallet();
+
             this.id = id;
 
             this.initialLoan = loanAmount;

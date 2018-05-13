@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace RepChain
 {
+    [Serializable]
     public class Wallet
     {
         public Guid id { get; set; }

@@ -22,7 +22,7 @@ namespace RepChain
 
         public static List<Customer> customers;
 
-        public static Wallet wallet;
+        public static Wallet bankWallet;
 
         public static Random rand;
 
@@ -42,8 +42,8 @@ namespace RepChain
                 wallets = new List<Wallet>();
             }*/
 
-            wallet = new Wallet();
-            wallet.balance += 9900;
+            bankWallet = new Wallet();
+            bankWallet.balance += 9900;
             //wallets.Add(wallet);
             //WriteWallets(wallets);
 
@@ -54,18 +54,134 @@ namespace RepChain
             customers = new List<Customer>();
             customers = InitCustomers();
 
+            var repaymentRate = 0.05;
+
             //Console.ReadKey();
 
             while (true)
             {
 
-                Console.WriteLine("Trying to mine Transaction " + (i + 1) + "...");
+                for (int j = 0; j < customers.Count; j++)
+                {
+                    var customer = customers.ElementAt(j);
 
-                mineTransaction();
+                    var repaymentChance = rand.NextDouble() * (1 / customer.defaultFactor);
 
-                //Console.ReadKey();
+                    if (repaymentChance < repaymentRate)
+                    {
+                        DefaultPayment(customer);
+                    }
+                    else
+                    {
+                        MakePayment(customer);
+                    }
+                }
+
+                //Console.WriteLine("Trying to mine Transaction " + (i + 1) + "...");
+
+                /*Customer nextPayer = randomWallet();
+
+                var amount = nextPayer.installmentAmount/*rand.Next(1, 11)*/;
+
+                /*while (nextPayer == nextPayee && nextPayer.balance >= amount)
+                {
+                    nextPayer = randomWallet();
+                }
+
+                blockchain.Add(
+                    new Transaction(amount,
+                    blockchain.Last().hash,
+                    wallet, nextPayer.wallet, wallet));
+
+                mineTransaction();*/
+
+                Console.ReadKey();
                 Console.WriteLine("");
             }
+        }
+
+        private static void MakePayment(Customer customer)
+        {
+            customer.remainingAmount -= customer.installmentAmount;
+            customer.paymentsMade++;
+
+            transChain.blockchain.Add(new Transaction(customer.installmentAmount,
+                transChain.blockchain.Last().hash,
+                bankWallet, customer.wallet, bankWallet));
+
+            mineTransaction();
+
+            //TODO: Add RepChain logic in here.
+
+            if (customer.paymentsMade == customer.numInstallments)
+            {
+                LoanRepaid(customer);
+                return;
+            }
+
+            var msg = string.Format("Customer {0} has made a payment of {1}, remaining balance is {2}, {3} payments left.",
+                customer.id,
+                customer.installmentAmount,
+                customer.remainingAmount,
+                customer.numInstallments - customer.paymentsMade);
+            Console.WriteLine(msg);
+        }
+
+        private static void LoanRepaid(Customer customer)
+        {
+            customer.loansRepaid++;
+
+            //TODO: Add RepChain logic here.
+
+            Console.ForegroundColor = ConsoleColor.Green;
+            var msg = string.Format("Customer {0} has repaid their loan, {1} loans repaid, {2} loans defaulted.",
+                customer.id,
+                customer.loansRepaid,
+                customer.loansDefaulted);
+            Console.WriteLine(msg);
+            Console.ForegroundColor = ConsoleColor.Gray;
+
+            customer.Reset();
+        }
+
+        private static void DefaultPayment(Customer customer)
+        {
+            customer.paymentsMissed++;
+            customer.defaultFactor++;
+
+            //TODO: Add Repchain logic here if necessary.
+
+            if (customer.paymentsMissed == customer.maxPaymentsMissed)
+            {
+                DefaultLoan(customer);
+                return;
+            }
+
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            var msg = string.Format("Customer {0} has missed a payment, this is their {1}th missed payment, only {2} more payments can be missed, remaining balance is {3}.",
+                customer.id,
+                customer.paymentsMissed,
+                customer.maxPaymentsMissed - customer.paymentsMissed - 1,
+                customer.remainingAmount);
+            Console.WriteLine(msg);
+            Console.ForegroundColor = ConsoleColor.Gray;
+        }
+
+        private static void DefaultLoan(Customer customer)
+        {
+            customer.loansDefaulted++;
+
+            //TODO: Add Repchain logic in here.
+
+            Console.ForegroundColor = ConsoleColor.Red;
+            var msg = string.Format("Customer {0} has defaulted on their loan, {1} loans repaid, {2} loans defaulted.",
+                customer.id,
+                customer.loansRepaid,
+                customer.loansDefaulted);
+            Console.WriteLine(msg);
+            Console.ForegroundColor = ConsoleColor.Gray;
+
+            customer.Reset();
         }
 
         private static void mineTransaction()
@@ -73,13 +189,15 @@ namespace RepChain
             var blockchain = transChain.blockchain;
             var i = blockchain.Count - 1;
 
-            if(blockchain.Count == 1)
+            /*if(blockchain.Count == 1)
             {
+                blockchain.Last().mineTransaction(transChain.difficulty)
+
                 WriteBlockchain(blockchain);
                 return;
-            }
+            }*/
 
-            blockchain.Last().mineTransaction(transChain.difficulty);
+                blockchain.Last().mineTransaction(transChain.difficulty);
 
             var temp = CheckLedger();
 
@@ -94,38 +212,51 @@ namespace RepChain
 
                 Console.WriteLine("Transaction Mined: " + verifiedTransaction.hash);
                 Console.WriteLine("");
-                transChain.PrintChain();
+                //transChain.PrintChain();
 
                 //Decrease payer
-                customers.FirstOrDefault(x => x.wallet.id == verifiedTransaction.payer.id)
-                    .wallet.balance -= verifiedTransaction.value;
+                if(bankWallet.id == verifiedTransaction.payer.id)
+                {
+                    bankWallet.balance -= verifiedTransaction.value;
+                }
+                else
+                {
+                    customers.FirstOrDefault(x => x.wallet.id == verifiedTransaction.payer.id)
+                        .wallet.balance -= verifiedTransaction.value;
+                }
 
                 //Increase payee ALWAYS BANK FOR NOW
-                wallet.balance += verifiedTransaction.value;
-                /*wallets.FirstOrDefault(x => x.id == verifiedTransaction.payee.id)
-                    .balance += verifiedTransaction.value;*/
+                if (bankWallet.id == verifiedTransaction.payee.id)
+                {
+                    bankWallet.balance += verifiedTransaction.value;
+                }
+                else
+                {
+                    customers.FirstOrDefault(x => x.wallet.id == verifiedTransaction.payee.id)
+                        .wallet.balance += verifiedTransaction.value;
+                }
 
                 //Reward miner ALWAYS BANK FOR NOW
-                wallet.balance += RepChain.reward;
+                bankWallet.balance += RepChain.reward;
                 /*wallets.FirstOrDefault(x => x.id == verifiedTransaction.miner.id)
                     .balance += RepChain.reward;*/
 
                 //WriteWallets(wallets);
 
                 //Wallet nextPayee = randomWallet();
-                Customer nextPayer = randomWallet();
+                /*Customer nextPayer = randomWallet();
 
                 var amount = nextPayer.installmentAmount/*rand.Next(1, 11)*/;
 
                 /*while (nextPayer == nextPayee && nextPayer.balance >= amount)
                 {
                     nextPayer = randomWallet();
-                }*/
+                }
 
                 blockchain.Add(
                     new Transaction(amount,
                     verifiedTransaction.hash,
-                    wallet, nextPayer.wallet, wallet));
+                    wallet, nextPayer.wallet, wallet));*/
 
                 WriteBlockchain(blockchain);
 
@@ -168,7 +299,7 @@ namespace RepChain
                 var prevHash = transChain.blockchain.Count == 0 ? "0" : transChain.blockchain.Last().hash;
 
                 transChain.blockchain.Add(new Transaction(loanAmount, prevHash,
-                    wallet, customer.wallet, wallet));
+                    bankWallet, bankWallet, customer.wallet));
 
                 mineTransaction();
             }

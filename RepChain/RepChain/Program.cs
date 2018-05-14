@@ -11,37 +11,48 @@ namespace RepChain
 {
     class Program
     {
-        static readonly string blockchainPath = "C:/blockchain.json";
+        //Transaction chain path
+        static readonly string transChainPath = "C:/transChain.json";
+        static readonly string repChainPath = "C:/repChain.json";
         static readonly string walletPath = "C:/wallets.json";
-        public static RepChain repChain = new RepChain();
+
+        public static RepChain repChain = new RepChain(5);
+        public static RepChain transChain = new RepChain(4);
+
+
+        public static List<Customer> customers;
 
         public static Wallet wallet;
-        public static List<Wallet> wallets;
 
         public static Random rand;
 
         public static EventWaitHandle waitHandle = new EventWaitHandle(true, EventResetMode.AutoReset, "SHARED_BY_ALL_PROCESSES_FOR_WALLETS");
 
-        static void Main(string[] args) { 
+        static void Main(string[] args)
+        {
 
-            if (File.Exists(walletPath))
+            rand = new Random();
+
+            /*if (File.Exists(walletPath))
             {
                 wallets = ReadWallets();
             }
             else
             {
                 wallets = new List<Wallet>();
-            }
+            }*/
 
             wallet = new Wallet();
-            wallets.Add(wallet);
-            WriteWallets(wallets);
+            wallet.balance += 9900;
+            //wallets.Add(wallet);
+            //WriteWallets(wallets);
 
-            repChain.blockchain = CheckLedger();
-            var blockchain = repChain.blockchain;
+            transChain.blockchain = CheckLedger();
+            var blockchain = transChain.blockchain;
             var i = blockchain.Count - 1;
 
-            rand = new Random();
+            customers = new List<Customer>();
+            customers = InitCustomers();
 
             //Console.ReadKey();
 
@@ -49,101 +60,141 @@ namespace RepChain
             {
 
                 Console.WriteLine("Trying to mine Transaction " + (i + 1) + "...");
-                blockchain.ElementAt(i).mineTransaction(RepChain.difficulty);
-                var temp = CheckLedger();
 
-                wallets = ReadWallets();
-                while (wallets.Count <= 1)
-                {
-                    wallets = ReadWallets();
-                };
-                if (repChain.isChainValid() && blockchain.Count >= temp.Count)
-                {
-                    var verifiedTransaction = blockchain.Last();
-
-                    Console.WriteLine("Transaction Mined: " + verifiedTransaction.hash);
-                    Console.WriteLine("");
-                    repChain.PrintChain();
-
-                    //Decrease payer
-                    wallets.FirstOrDefault(x => x.id == verifiedTransaction.payer.id)
-                        .balance -= verifiedTransaction.value;
-
-                    //Increase payee
-                    wallets.FirstOrDefault(x => x.id == verifiedTransaction.payee.id)
-                        .balance += verifiedTransaction.value;
-
-                    //Reward miner
-                    wallets.FirstOrDefault(x => x.id == verifiedTransaction.miner.id)
-                        .balance += RepChain.reward;
-
-                    WriteWallets(wallets);
-
-                    Wallet nextPayee = randomWallet();
-                    Wallet nextPayer = randomWallet();
-
-                    var amount = 10/*rand.Next(1, 11)*/;
-
-                    while (nextPayer == nextPayee && nextPayer.balance >= amount)
-                    {
-                        nextPayer = randomWallet();
-                    }
-
-                    blockchain.Add(
-                        new Transaction(amount, 
-                        verifiedTransaction.hash,
-                        wallets.FirstOrDefault(x => x.id == wallet.id), nextPayer, nextPayee));
-
-                    WriteBlockchain(blockchain);
-
-                    i++;
-                }
-                else if(blockchain.Count != CheckLedger().Count)
-                {
-                    var tempChain = new RepChain();
-                    tempChain.blockchain = ReadBlockchain();
-                    if (tempChain.isChainValid())
-                    {
-                        repChain.blockchain = tempChain.blockchain;
-                        blockchain = repChain.blockchain;
-                        i = blockchain.Count - 1;
-                    }
-                    else
-                    {
-                        Console.WriteLine("Rejecting chain, rolling back.");
-                        if (tempChain.RollBack())
-                        {
-                            repChain.blockchain = tempChain.blockchain;
-                            blockchain = repChain.blockchain;
-                        }
-                        WriteBlockchain(blockchain);
-                    }
-                }
+                mineTransaction();
 
                 //Console.ReadKey();
                 Console.WriteLine("");
             }
         }
 
-        private static Wallet randomWallet()
+        private static void mineTransaction()
         {
-            return wallets.ElementAt(rand.Next(0, wallets.Count));
+            var blockchain = transChain.blockchain;
+            var i = blockchain.Count - 1;
+
+            if(blockchain.Count == 1)
+            {
+                WriteBlockchain(blockchain);
+                return;
+            }
+
+            blockchain.Last().mineTransaction(transChain.difficulty);
+
+            var temp = CheckLedger();
+
+            /*wallets = ReadWallets();
+            while (wallets.Count <= 1)
+            {
+                wallets = ReadWallets();
+            };*/
+            if (transChain.isChainValid() && blockchain.Count >= temp.Count)
+            {
+                var verifiedTransaction = blockchain.Last();
+
+                Console.WriteLine("Transaction Mined: " + verifiedTransaction.hash);
+                Console.WriteLine("");
+                transChain.PrintChain();
+
+                //Decrease payer
+                customers.FirstOrDefault(x => x.wallet.id == verifiedTransaction.payer.id)
+                    .wallet.balance -= verifiedTransaction.value;
+
+                //Increase payee ALWAYS BANK FOR NOW
+                wallet.balance += verifiedTransaction.value;
+                /*wallets.FirstOrDefault(x => x.id == verifiedTransaction.payee.id)
+                    .balance += verifiedTransaction.value;*/
+
+                //Reward miner ALWAYS BANK FOR NOW
+                wallet.balance += RepChain.reward;
+                /*wallets.FirstOrDefault(x => x.id == verifiedTransaction.miner.id)
+                    .balance += RepChain.reward;*/
+
+                //WriteWallets(wallets);
+
+                //Wallet nextPayee = randomWallet();
+                Customer nextPayer = randomWallet();
+
+                var amount = nextPayer.installmentAmount/*rand.Next(1, 11)*/;
+
+                /*while (nextPayer == nextPayee && nextPayer.balance >= amount)
+                {
+                    nextPayer = randomWallet();
+                }*/
+
+                blockchain.Add(
+                    new Transaction(amount,
+                    verifiedTransaction.hash,
+                    wallet, nextPayer.wallet, wallet));
+
+                WriteBlockchain(blockchain);
+
+                i++;
+            }
+            else if (blockchain.Count != CheckLedger().Count)
+            {
+                var tempChain = new RepChain(transChain.difficulty);
+                tempChain.blockchain = ReadBlockchain();
+                if (tempChain.isChainValid())
+                {
+                    transChain.blockchain = tempChain.blockchain;
+                    blockchain = transChain.blockchain;
+                    i = blockchain.Count - 1;
+                }
+                else
+                {
+                    Console.WriteLine("Rejecting chain, rolling back.");
+                    if (tempChain.RollBack())
+                    {
+                        transChain.blockchain = tempChain.blockchain;
+                        blockchain = transChain.blockchain;
+                    }
+                    WriteBlockchain(blockchain);
+                }
+            }
+        }
+
+        private static List<Customer> InitCustomers()
+        {
+            var numCustomers = rand.Next(5, 11);
+
+            for (int j = 0; j < numCustomers; j++)
+            {
+                var loanAmount = rand.Next(100, 1001);
+
+                var customer = new Customer(j, loanAmount);
+                customers.Add(customer);
+
+                var prevHash = transChain.blockchain.Count == 0 ? "0" : transChain.blockchain.Last().hash;
+
+                transChain.blockchain.Add(new Transaction(loanAmount, prevHash,
+                    wallet, customer.wallet, wallet));
+
+                mineTransaction();
+            }
+
+            return customers;
+        }
+
+        private static Customer randomWallet()
+        {
+            return customers.ElementAt(rand.Next(0, customers.Count));
         }
 
         private static void WriteBlockchain(List<Transaction> blockchain)
         {
-            repChain.waitHandle.WaitOne();
-            File.WriteAllText(blockchainPath, JsonConvert.SerializeObject(blockchain));
-            repChain.waitHandle.Set();
+            transChain.waitHandle.WaitOne();
+            File.WriteAllText(transChainPath, JsonConvert.SerializeObject(blockchain));
+            transChain.waitHandle.Set();
         }
 
         private static List<Transaction> ReadBlockchain()
         {
             var blockchain = new List<Transaction>();
 
-            repChain.waitHandle.WaitOne();
-            blockchain = JsonConvert.DeserializeObject<List<Transaction>>(File.ReadAllText(blockchainPath));
-            repChain.waitHandle.Set();
+            transChain.waitHandle.WaitOne();
+            blockchain = JsonConvert.DeserializeObject<List<Transaction>>(File.ReadAllText(transChainPath));
+            transChain.waitHandle.Set();
 
             return blockchain;
         }
@@ -168,21 +219,21 @@ namespace RepChain
         {
             List<Transaction> blockchain;
             //Check blockchain exists
-            if (File.Exists(blockchainPath))
+            if (File.Exists(transChainPath))
             {
                 blockchain = ReadBlockchain();
             }
             else
             {
-                Console.WriteLine("Generating first Transaction...");
+                //Console.WriteLine("Generating first Transaction...");
 
                 blockchain = new List<Transaction>();
 
-                blockchain.Add(new Transaction(0, "0", wallet, wallet, wallet));
+                //blockchain.Add(new Transaction(0, "0", wallet, wallet, wallet));
 
-                WriteBlockchain(blockchain);
+                //WriteBlockchain(blockchain);
 
-                WriteWallets(wallets);
+                //WriteWallets(wallets);
             }
 
             Console.WriteLine("");

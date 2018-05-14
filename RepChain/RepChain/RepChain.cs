@@ -11,16 +11,17 @@ namespace RepChain
     {
         public List<Transaction> blockchain;
 
-        public static int difficulty = 5;
+        public int difficulty;
 
         public EventWaitHandle waitHandle;
 
         public static int reward = 10;
 
-        public RepChain()
+        public RepChain(int difficulty)
         {
             blockchain = new List<Transaction>();
             waitHandle = new EventWaitHandle(true, EventResetMode.AutoReset, "SHARED_BY_ALL_PROCESSES");
+            this.difficulty = difficulty;
         }
 
         public void PrintChain()

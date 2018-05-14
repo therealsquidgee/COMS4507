@@ -16,13 +16,13 @@ namespace RepChain
 
         public String hash;
         public String previousHash;
-        public int value; //our data will be a simple message.
+        public double value; //our data will be a simple message.
         public long timeStamp; // in epoch time (seconds)
         public int nonce;
         public Random rand = new Random();
 
         //Transaction Constructor.
-        public Transaction(int value, String previousHash, Wallet miner, Wallet payer, Wallet payee)
+        public Transaction(double value, String previousHash, Wallet miner, Wallet payer, Wallet payee)
         {
             this.value = value;
             this.previousHash = previousHash;

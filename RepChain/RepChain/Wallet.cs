@@ -11,7 +11,7 @@ namespace RepChain
     {
         public Guid id { get; set; }
 
-        public int balance { get; set; }
+        public double balance { get; set; }
 
         public Wallet()
         {
